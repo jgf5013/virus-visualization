@@ -1,0 +1,2 @@
+# Virus Visualization
+Inspired by [Why outbreaks like coronavirus spread exponentially, and how to “flatten the curve”](https://www.washingtonpost.com/graphics/2020/world/corona-simulator/?utm_source=reddit.com)
