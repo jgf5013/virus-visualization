@@ -1,9 +1,10 @@
 .container {
+    height: 100%;
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-template-rows: 1fr 1fr;
-    grid-column-gap: minmax(5px, 10%);
-    grid-row-gap: minmax(5px, 10%);
+    grid-column-gap: 5px;
+    grid-row-gap: 5px;
 
     visualization {
         grid-column: 1;
