@@ -18,10 +18,16 @@ export class VisualizationComponent {
 	private canvasHeight: number;
 	private canvasWidth: number;
 
+	constructor(private el:ElementRef) {
+
+	}
+
 	private people: Person[] = [];
 
 	ngOnInit(): void {
 		this.context = this.canvas.nativeElement.getContext('2d');
+		this.context.canvas.setAttribute('width', this.el.nativeElement.offsetWidth);
+		this.context.canvas.setAttribute('height', this.el.nativeElement.offsetHeight);
 		this.canvasWidth = this.context.canvas.width;
 		this.canvasHeight = this.context.canvas.height;
 		this.context.fillStyle = 'rgba(0,0,255,0.7)';

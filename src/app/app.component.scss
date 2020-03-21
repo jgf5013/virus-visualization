@@ -1,0 +1,21 @@
+.container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-column-gap: minmax(5px, 10%);
+    grid-row-gap: minmax(5px, 10%);
+
+    visualization {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+    }
+
+    stats-dashboard {
+        grid-column: 2;
+        min-width: 25%;
+    }
+    control-panel {
+        grid-column: 2;
+        min-width: 25%;
+    }
+}
