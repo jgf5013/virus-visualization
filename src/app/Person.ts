@@ -1,7 +1,7 @@
 import { Motion } from './Motion';
 
 export class Person {
-    private MAX_SPEED = 4;
+    private MAX_SPEED = 2;
     private MAX_ACCELERATION = 1;
     
     public motion: Motion;
