@@ -1,1 +1,11 @@
-<p>Control Panel...</p>
+<mat-card>
+    <mat-form-field>
+        <mat-label>Quarentine Mode</mat-label>
+        <mat-select (selectionChange)="quarentineModeChange($event)">
+            <mat-option>None</mat-option>
+            <mat-option *ngFor="let mode of quarentineModes" [value]="mode.mode">
+                {{mode.mode | titlecase}}
+            </mat-option>
+        </mat-select>
+      </mat-form-field>
+</mat-card>

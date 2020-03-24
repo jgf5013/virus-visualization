@@ -1,12 +1,21 @@
 import { Motion } from './Motion';
 
+import { DAYS_TO_RECOVER } from './visualization.component'
+
+export const enum InfectionStatus {
+    HEALTHY,
+    CONTAGIOUS,
+    IMMUNE
+};
+
 export class Person {
     private MAX_SPEED = 2;
     private MAX_ACCELERATION = 1;
     
     public motion: Motion;
+    private infectionDay;
 
-    constructor(public id: number, public x: number, public y: number) {
+    constructor(public id: number, public x: number, public y: number, public infectionStatus: InfectionStatus = InfectionStatus.HEALTHY) {
         const vx = ((Math.random() > 0.5) ? 1 : -1) * Math.random() * this.MAX_SPEED;
         const vy = ((Math.random() > 0.5) ? 1 : -1) * Math.random() * this.MAX_SPEED;
         const dvx = ((Math.random() > 0.5) ? 1 : -1) * Math.random() * this.MAX_ACCELERATION;
@@ -40,5 +49,22 @@ export class Person {
 
         if((['top', 'bottom'].indexOf(side) > -1)) { this.motion.dvy *= -1; }
         if((['left', 'right'].indexOf(side) > -1)) { this.motion.dvx *= -1; }
+    }
+
+    public infect(friend: Person, infectionDay: number) {
+        if(friend.infectionStatus === InfectionStatus.IMMUNE) { return; }
+        
+        if(this.infectionStatus === InfectionStatus.CONTAGIOUS) {
+            friend.infectionStatus = InfectionStatus.CONTAGIOUS;
+            friend.infectionDay = infectionDay;
+        }
+    }
+
+    public recover(dayId) {
+        if(!this.infectionDay) { return; }
+
+        if((dayId - this.infectionDay) > DAYS_TO_RECOVER) {
+            this.infectionStatus = InfectionStatus.IMMUNE;
+        }
     }
 }
