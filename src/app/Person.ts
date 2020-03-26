@@ -1,6 +1,7 @@
 import { Motion } from './Motion';
 
 import { DAYS_TO_RECOVER } from './visualization.component'
+import { Quarentine } from './quarentin-level.interface';
 
 export const enum InfectionStatus {
     HEALTHY,
@@ -38,6 +39,15 @@ export class Person {
         this.motion.vy = Math.min(this.motion.vy, this.MAX_SPEED);
     }
 
+    public quarentine(quarentine: Quarentine) {
+        // this.motion.vx = this.motion.vx * quarentine.speedFactor;
+        // this.motion.vy = this.motion.vy * quarentine.speedFactor;
+
+        this.motion.vx = (Math.random() < quarentine.percentageMoving) ? this.motion.vx : 0;
+        this.motion.vy = (Math.random() < quarentine.percentageMoving) ? this.motion.vy : 0;
+        
+    }
+
     public updateAcceleration() {
         this.motion.dvx += ((Math.random() > 0.5) ? 1 : -1) * Math.random() * this.MAX_ACCELERATION;
         this.motion.dvy += ((Math.random() > 0.5) ? 1 : -1) * Math.random() * this.MAX_ACCELERATION;
@@ -53,7 +63,7 @@ export class Person {
 
     public infect(friend: Person, infectionDay: number) {
         if(friend.infectionStatus === InfectionStatus.IMMUNE) { return; }
-        
+
         if(this.infectionStatus === InfectionStatus.CONTAGIOUS) {
             friend.infectionStatus = InfectionStatus.CONTAGIOUS;
             friend.infectionDay = infectionDay;

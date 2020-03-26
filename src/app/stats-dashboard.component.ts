@@ -1,25 +1,20 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { Store, select } from '@ngrx/store';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
-import { VisualizationState } from './visualization.interface';
+import { VisualizationState, VisualizationColors } from './visualization.interface';
 import { ControlPanelState } from './control-panel.interface';
 import { selectDayHistory, selectVisualization } from './visualization.selector';
 import { Day } from './Day';
 import { AppState } from './app.interface';
 
-import { RED, GREEN, BLUE, GREY, NUMBER_OF_POINTS } from './visualization.component';
+import { NUMBER_OF_POINTS } from './visualization.component';
 import { selectControlPanel } from './control-panel.selector';
 import { initialVisualizationState } from './visualization.reducer';
 
-enum QuarentineMode {
-	NONE = '',
-	LOW = 'rgba(50, 170, 170, .3)',
-	MEDIUM = 'rgba(50, 170, 170, .5)',
-	HIGH = 'rgba(50, 170, 170, .6)',
-	LOCKDOWN = 'rgba(50, 170, 170, .8)'
-}
+import { QuarentineLevels } from './quarentin-level.interface';
+
 
 declare var require: any;
 let Boost = require('highcharts/modules/boost');
@@ -39,74 +34,95 @@ noData(Highcharts);
 export class StatsDashboardComponent implements OnInit {
 
 	public quarentineBands: any[] = [];
+	private stateSubscription: Subscription;
 	public chartRef: Highcharts.Chart;
 	public options: any = {
-		chart: {
-			type: 'areaspline'
-		},
 		title: {
 			text: 'Tracking the Spread'
 		},
 		subtitle: {
 			text: 'Day 0'
 		},
+		plotOptions: {
+			series: {
+				// general options for all series
+				marker: {
+					enabled: false
+				}
+			},
+			areaspline: {
+			}
+		},
 		xAxis: {
-			tickmarkPlacement: 'on',
 			title: {
 				enabled: false
-			},
-			plotBands: []
+			}
 		},
 		yAxis: [{
 			title: {
 				text: 'Amount'
 			},
 			max: NUMBER_OF_POINTS
-		},/* {
+		}, {
 			title: {
-				text: 'Interactions / person / day'
+				text: 'Quarentine Level'
 			},
-			opposite: true
-		}*/],
-		colors: [GREEN, RED, BLUE, GREY],
-		plotOptions: {
-			areaspline: {
-				stacking: 'normal',
-				lineColor: '#ffffff',
-				marker: {
-					enabled: false
+			opposite: true,
+			min: 0,
+			max: QuarentineLevels.LOCKDOWN.level,
+			allowDecimals: false,
+			labels: {
+				formatter: function() {
+
+					for (const key in QuarentineLevels) {
+						if (QuarentineLevels.hasOwnProperty(key)) {
+							if(QuarentineLevels[key].level === this.value) {
+								return QuarentineLevels[key].mode;
+							}
+						}
+					}
 				}
 			}
-		},
+		}],
+		colors: [
+			VisualizationColors['GREEN'].rgbaString,
+			VisualizationColors['RED'].rgbaString,
+			VisualizationColors['BLUE'].rgbaString,
+			VisualizationColors['GREY'].rgbaString
+		],
 		series: [{
+			type: 'areaspline',
 			name: 'Healthy',
 			data: []
 		}, {
+			type: 'areaspline',
 			name: 'Contagious',
 			data: []
 		}, {
+			type: 'areaspline',
 			name: 'Immune',
 			data: []
-		}/*, {
-			type: 'spline',
+		}, {
 			id: 'interactions',
 			dashStyle: 'dash',
-			name: 'Interactions / person / day',
+			marker: {
+				enabled: false
+			},
+			name: 'Quarentine Level',
 			yAxis: 1,
 			data: []
-		}, */]
+		}]
 	};
 
 	constructor(private store: Store<AppState>, private visualizationStore: Store<VisualizationState>) {
-
-		combineLatest(
+		
+		this.stateSubscription = combineLatest(
 			this.store.pipe(select(selectControlPanel)),
 			this.store.pipe(select(selectVisualization))
 		)
 		.subscribe(([controlPanelState, visState]) => {
-			const day: Day = visState.dayHistory[visState.dayHistory.length - 1];
-			this.handleControlPanelState(controlPanelState, day);
-			this.handleVisualizationstate(visState)
+			this.handleControlPanelState(controlPanelState, visState);
+			this.handleVisualizationstate(visState);
 		});
 	}
 
@@ -119,52 +135,25 @@ export class StatsDashboardComponent implements OnInit {
 		this.chartRef = Highcharts.chart('container', this.options);
 	}
 
-	handleControlPanelState(controlPanelState: ControlPanelState, day: Day) {
-		if(this.quarentineBands.length === 0) {
-			if(!controlPanelState.quarentineMode) { return; }
-
-			// First time adding a band
-			const plotBand = {
-				id: day.id.toString(),
-				from: day.id,
-				to: day.id,
-				type: controlPanelState.quarentineMode,
-				color: QuarentineMode.NONE
-			};
-			this.addQuarentineBand(plotBand);
-		}
-
-		// current quarentine mode is the same as this one... pop.
-		const previousBand = this.quarentineBands[this.quarentineBands.length - 1];
-		if(previousBand.type === controlPanelState.quarentineMode) {
-			const previousBand = this.quarentineBands.shift();
-			this.chartRef.xAxis[0].removePlotBand(previousBand.id);
-			previousBand.to = day.id.toString();
-			this.addQuarentineBand(previousBand);
-		}
-
-		// Otherwise we're adding a new band that's different from the current one...
-		this.quarentineBands.shift();
-		const plotBand = {
-			id: day.id.toString(),
-			from: day.id,
-			to: day.id,
-			type: controlPanelState.quarentineMode,
-			color: QuarentineMode.NONE
-		};
-		this.addQuarentineBand(plotBand);
+	handleControlPanelState(controlPanelState: ControlPanelState, visState: VisualizationState) {
+		
+		if(!this.chartRef) { return; } //TODO: Probably a better rxjs way to handle this...
+		this.chartRef.series[3].addPoint([visState.daysPassed, controlPanelState.quarentine.level]);
 	}
 
 	handleVisualizationstate(visState: VisualizationState) {
 		if(visState.daysPassed === 0) { return; }
-		this.addDayStats(visState);
+
 		this.updateSubtitle(visState);
+
+		if(visState.recovered) {
+			this.stateSubscription.unsubscribe();
+		} else {
+			this.addDayStats(visState);
+		}
+
 	}
 
-	addQuarentineBand(plotBand) {
-		this.quarentineBands.push(plotBand);
-		this.chartRef.xAxis[0].addPlotBand(plotBand);
-	}
 
 	addDayStats(visState: VisualizationState) {
 		const day: Day = visState.dayHistory[visState.dayHistory.length - 1];
@@ -172,11 +161,10 @@ export class StatsDashboardComponent implements OnInit {
 		this.chartRef.series[0].addPoint([visState.daysPassed, day.numHealthy]);
 		this.chartRef.series[1].addPoint([visState.daysPassed, day.numContagious]);
 		this.chartRef.series[2].addPoint([visState.daysPassed, day.numImmune]);
-		// this.chartRef.series[3].addPoint([visState.daysPassed, avgNumberOfCollisions]);
 	}
 
 	updateSubtitle(visState: VisualizationState) {
-		const day: Day = visState.dayHistory[visState.dayHistory.length - 1];
-		this.chartRef.subtitle.update({ text: `Day ${visState.dayHistory.length}` });
+		const populationHealthText = visState.recovered ? '- Population Recovered!' : '';
+		this.chartRef.subtitle.update({ text: `Day ${visState.daysPassed} ${populationHealthText}` });
 	}
 }

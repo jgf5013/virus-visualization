@@ -2,9 +2,10 @@
 import * as ControlPanelActions from './control-panel.actions';
 import { createReducer, on, Action } from '@ngrx/store';
 import { ControlPanelState } from './control-panel.interface';
+import { QuarentineLevels } from './quarentin-level.interface';
 
 export const initialControlPanelState: ControlPanelState = {
-    quarentineMode: null
+    quarentine: QuarentineLevels.NONE
 };
 
 export const CONTROL_PANEL_FEATURE_KEY = 'controlPanelState';
@@ -13,7 +14,7 @@ export const CONTROL_PANEL_FEATURE_KEY = 'controlPanelState';
 const controlPanelReducer = createReducer(
     initialControlPanelState,
   on(ControlPanelActions.ChangeControls, (state: ControlPanelState, payload: any) => {
-    return ({ ...state, quarentineMode: payload.quarentineMode });
+    return ({ ...state, quarentine: payload.quarentine });
   })
 );
 

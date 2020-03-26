@@ -9,5 +9,5 @@ export const selectControlPanel = createFeatureSelector<AppState, ControlPanelSt
 
 export const selectQuarentineMode = createSelector(
     selectControlPanel,
-    (state: ControlPanelState) => state.quarentineMode
+    (state: ControlPanelState) => state.quarentine
 );

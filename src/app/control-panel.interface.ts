@@ -1,3 +1,4 @@
+import { Quarentine } from './quarentin-level.interface'
 export interface ControlPanelState {
-    quarentineMode: string;
+    quarentine: Quarentine;
 }

@@ -7,7 +7,8 @@ import { AppState } from './app.interface';
 
 export const initialVisualizationState: VisualizationState = {
     dayHistory: [],
-    daysPassed: 0
+    daysPassed: 0,
+    recovered: false
 };
 
 export const VISUALIZATION_FEATURE_KEY = 'visualizationState';
@@ -21,6 +22,10 @@ const visualizationReducer = createReducer(
     if(dayHistory.length > MAX_DAY_HISTORY) { dayHistory.shift(); }
 
     return ({ ...state, dayHistory: dayHistory, daysPassed: state.daysPassed + 1 });
+  }),
+  on(VisualizationActions.PopulationRecovered, (state: VisualizationState) => {
+
+    return ({ ...state, recovered: true});
   }),
   on(VisualizationActions.Reset, state => initialVisualizationState)
 );

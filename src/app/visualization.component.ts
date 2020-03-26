@@ -1,12 +1,16 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { Person, InfectionStatus } from './Person';
 import { Day } from './Day';
-import { Store } from '@ngrx/store';
-import { VisualizationState } from './visualization.interface';
-import { CaptureDay } from './visualization.actions';
+import { Store, select } from '@ngrx/store';
+import { VisualizationState, VisualizationColors } from './visualization.interface';
+import { CaptureDay, PopulationRecovered } from './visualization.actions';
+import { AppState } from './app.interface';
+import { ControlPanelState } from './control-panel.interface';
+import { selectControlPanel } from './control-panel.selector';
+import { Quarentine, QuarentineLevels } from './quarentin-level.interface';
 
 
-export const NUMBER_OF_POINTS: number = 100;
+export const NUMBER_OF_POINTS: number = 1000;
 export const MIN_CONTACT_DIST: number = 3;
 export const COLLISION_ELASTICITY: number = 0.1;
 export const FRAMES_PER_DAY: number = 24;
@@ -15,10 +19,6 @@ export const DAYS_TO_RECOVER: number = 5;
 const STARTING_NUMBER_INFECTED: number = 5;
 
 
-export const RED: string = 'rgba(200,100,100,1.0)';
-export const GREEN: string = 'rgba(100,200,150,0.9)';
-export const BLUE: string = 'rgba(0,100,250,0.7)';
-export const GREY: string = 'rgba(100,100,100,0.7)';
 
 
 @Component({
@@ -35,11 +35,16 @@ export class VisualizationComponent {
 	private canvasHeight: number;
 	private canvasWidth: number;
 	private day: Day;
-	private dayHistory: Day[] = [];
+	private quarentine: Quarentine;
 
 
-	constructor(private el:ElementRef, private visualizationStore: Store<VisualizationState>) {
+	constructor(private el:ElementRef, private visualizationStore: Store<VisualizationState>, private store: Store<AppState>) {
 
+		this.store.pipe(select(selectControlPanel))
+		.subscribe((controlPaneState: ControlPanelState) => {
+			console.log(controlPaneState);
+			this.quarentine = controlPaneState.quarentine;
+		});
 	}
 
 	private people: Person[] = [];
@@ -52,7 +57,7 @@ export class VisualizationComponent {
 		this.canvasHeight = this.context.canvas.height;
 		this.day = new Day(0, 0, 0, NUMBER_OF_POINTS);
 		this.initializePeople();
-		this.context.fillStyle = GREEN;
+		this.context.fillStyle = VisualizationColors.GREEN.rgbaString;
 		this.render();
 	}
 
@@ -66,6 +71,9 @@ export class VisualizationComponent {
 			this.detectCollisions(person);
 			person.updatePosition();
 			person.updateVelocity();
+			if(this.quarentine) {
+				person.quarentine(this.quarentine);
+			}
 			// person.updateAcceleration();
 			this.drawPerson(person);
 		});
@@ -92,16 +100,16 @@ export class VisualizationComponent {
 	drawPerson(person: Person) {
 		switch (person.infectionStatus) {
 			case InfectionStatus.HEALTHY:
-				this.context.fillStyle = GREEN;
+				this.context.fillStyle = VisualizationColors.GREEN.rgbaString;
 				break;
 			case InfectionStatus.CONTAGIOUS:
-				this.context.fillStyle = RED;
+				this.context.fillStyle = VisualizationColors.RED.rgbaString;
 				break;
 			case InfectionStatus.IMMUNE:
-				this.context.fillStyle = BLUE;
+				this.context.fillStyle = VisualizationColors.BLUE.rgbaString;
 				break;
 			default:
-				this.context.fillStyle = GREEN;
+				this.context.fillStyle = VisualizationColors.GREEN.rgbaString;
 				break;
 		}
 		this.context.fillRect(person.x, person.y, 5, 5);
@@ -133,10 +141,16 @@ export class VisualizationComponent {
 	}
 
 	passDay() {
-
+		this.checkPopulationHealth();
 		this.captureStats();
 		this.recoverPopulation();
 		this.day = new Day(this.day.id + 1, 0, 0, NUMBER_OF_POINTS);
+	}
+
+	checkPopulationHealth() {
+		if(this.people.filter(p => p.infectionStatus === InfectionStatus.CONTAGIOUS).length === 0) {
+			this.visualizationStore.dispatch(PopulationRecovered());
+		}
 	}
 
 	captureStats() {
