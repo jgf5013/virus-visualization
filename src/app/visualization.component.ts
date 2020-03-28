@@ -14,10 +14,10 @@ export const NUMBER_OF_PEOPLE: number = 1000;
 export const MIN_CONTACT_DIST: number = 3;
 export const COLLISION_ELASTICITY: number = 0.1;
 export const FRAMES_PER_DAY: number = 24;
-export const DAYS_TO_RECOVER: number = 5;
+export const DAYS_TO_RECOVER: number = 15;
+export const DAILY_FATALITY_RATE: number = 0.2;
 
 const STARTING_NUMBER_INFECTED: number = 5;
-
 
 
 
@@ -77,7 +77,10 @@ export class VisualizationComponent implements OnInit {
 		}
 		this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 		
-		this.people.forEach(person => {
+		this.people
+		.filter((p: Person) => p.infectionStatus !== InfectionStatus.DEAD)
+		.forEach(person => {
+
 			this.detectCollisions(person);
 			person.updatePosition();
 			person.updateVelocity();
@@ -111,7 +114,9 @@ export class VisualizationComponent implements OnInit {
 	startVirus() {
 		//Need to do it with a while loop because you might hit the same person twice...
 		while(this.people.filter((p: Person) => p.infectionStatus === InfectionStatus.CONTAGIOUS).length <= STARTING_NUMBER_INFECTED) {
-			this.people[Math.floor(Math.random() * this.people.length)].infectionStatus = InfectionStatus.CONTAGIOUS;
+			const person: Person = this.people[Math.floor(Math.random() * this.people.length)];
+			person.infectionStatus = InfectionStatus.CONTAGIOUS;
+			person.infectionDay = 0;
 		}
 	}
 
@@ -134,7 +139,9 @@ export class VisualizationComponent implements OnInit {
 	}
 
 	detectCollisions(person: Person) {
-		this.people.forEach(potentialNeighbor => {
+		this.people
+		.filter((p: Person) => p.infectionStatus !== InfectionStatus.DEAD)
+		.forEach(potentialNeighbor => {
 			this.detectCollisionsWithOthers(potentialNeighbor, person);
 		});
 		this.detectCollisionWithWall(person);
@@ -159,6 +166,7 @@ export class VisualizationComponent implements OnInit {
 	}
 
 	passDay() {
+		this.dieOff();
 		this.checkPopulationHealth();
 		this.captureStats();
 		this.recoverPopulation();
@@ -175,12 +183,25 @@ export class VisualizationComponent implements OnInit {
 		const numHealthy = this.people.filter(p => (p.infectionStatus === InfectionStatus.HEALTHY)).length;
 		const numContagious = this.people.filter(p => (p.infectionStatus === InfectionStatus.CONTAGIOUS)).length;
 		const numImmune = this.people.filter(p => (p.infectionStatus === InfectionStatus.IMMUNE)).length;
-		this.day.setStats(numHealthy, numContagious, numImmune);
+		const numDead = this.people.filter(p => p.infectionStatus === InfectionStatus.DEAD).length;
+		this.day.setStats(numHealthy, numContagious, numImmune, numDead);
 		this.visualizationStore.dispatch(CaptureDay({day: this.day}));
 	}
 
+	dieOff() {
+		this.people
+		.filter((p: Person) => p.infectionStatus === InfectionStatus.CONTAGIOUS)
+		.forEach((p: Person) => {
+			if(p.id < NUMBER_OF_PEOPLE * Math.random() * DAILY_FATALITY_RATE) {
+				p.die();
+			}
+		});
+	}
+
 	recoverPopulation() {
-		this.people.forEach(person => person.recover(this.day.id));
+		this.people
+		.filter((p: Person) => p.infectionStatus === InfectionStatus.CONTAGIOUS)
+		.forEach(person => person.recover(this.day.id));
 	}
 
 	collide(person1: Person, person2: Person) {

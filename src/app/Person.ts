@@ -6,7 +6,8 @@ import { Quarentine } from './quarentin-level.interface';
 export const enum InfectionStatus {
     HEALTHY,
     CONTAGIOUS,
-    IMMUNE
+    IMMUNE,
+    DEAD
 };
 
 export class Person {
@@ -14,7 +15,10 @@ export class Person {
     private MAX_ACCELERATION = 1;
     
     public motion: Motion;
-    private infectionDay;
+    public infectionDay;
+    public alive: boolean = true;
+
+    public INFECTION_RATE = 0.2;
 
     constructor(public id: number, public x: number, public y: number, private speedId: number, private motionId: number, public infectionStatus: InfectionStatus = InfectionStatus.HEALTHY) {
         const vx = ((Math.random() > 0.5) ? 1 : -1) * Math.random() * this.MAX_SPEED;
@@ -68,8 +72,11 @@ export class Person {
         if((['left', 'right'].indexOf(side) > -1)) { this.motion.dvx *= -1; }
     }
 
-    public infect(friend: Person, infectionDay: number) {
-        if(friend.infectionStatus === InfectionStatus.IMMUNE) { return; }
+    public infect(friend: Person, infectionDay: number = 0) {
+        // Only infect the healthy people...
+        if(friend.infectionStatus !== InfectionStatus.HEALTHY) { return; }
+
+        if(Math.random() < this.INFECTION_RATE) { return; }
 
         if(this.infectionStatus === InfectionStatus.CONTAGIOUS) {
             friend.infectionStatus = InfectionStatus.CONTAGIOUS;
@@ -78,10 +85,14 @@ export class Person {
     }
 
     public recover(dayId) {
-        if(!this.infectionDay) { return; }
+        if(this.infectionDay === null) { return; }
 
         if((dayId - this.infectionDay) > DAYS_TO_RECOVER) {
             this.infectionStatus = InfectionStatus.IMMUNE;
         }
+    }
+
+    public die() {
+        this.infectionStatus = InfectionStatus.DEAD;
     }
 }

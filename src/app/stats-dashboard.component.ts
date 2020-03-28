@@ -34,6 +34,7 @@ noData(Highcharts);
 export class StatsDashboardComponent implements OnInit {
 
 	public quarentineBands: any[] = [];
+	public numDead: number;
 	private stateSubscription: Subscription;
 	public chartRef: Highcharts.Chart;
 	public options: any = {
@@ -41,6 +42,7 @@ export class StatsDashboardComponent implements OnInit {
 			text: 'Tracking the Spread'
 		},
 		subtitle: {
+			useHTML: true,
 			text: 'Day 0'
 		},
 		plotOptions: {
@@ -116,7 +118,7 @@ export class StatsDashboardComponent implements OnInit {
 		}]
 	};
 
-	constructor(private store: Store<AppState>, private visualizationStore: Store<VisualizationState>) {
+	constructor(private store: Store<AppState>) {
 		
 		this.stateSubscription = combineLatest(
 			this.store.pipe(select(selectControlPanel)),
@@ -164,10 +166,12 @@ export class StatsDashboardComponent implements OnInit {
 		this.chartRef.series[0].addPoint([visState.daysPassed, day.numHealthy]);
 		this.chartRef.series[1].addPoint([visState.daysPassed, day.numContagious]);
 		this.chartRef.series[2].addPoint([visState.daysPassed, day.numImmune]);
+
+		this.numDead = day.numDead;
 	}
 
 	updateSubtitle(visState: VisualizationState) {
-		const populationHealthText = visState.recovered ? '- Population Recovered!' : '';
-		this.chartRef.subtitle.update({ text: `Day ${visState.daysPassed} ${populationHealthText}` });
+		const populationHealthText = visState.recovered ? `Population Recovered!` : '';
+		this.chartRef.subtitle.update({ text: `<p style="text-align: center";>Day ${visState.daysPassed} - ${this.numDead || 0} dead<br/>${populationHealthText}</p>` });
 	}
 }
