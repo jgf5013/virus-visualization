@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnInit } from '@angular/core';
 import { Person, InfectionStatus } from './Person';
 import { Day } from './Day';
 import { Store, select } from '@ngrx/store';
@@ -26,7 +26,7 @@ const STARTING_NUMBER_INFECTED: number = 5;
 	templateUrl: './visualization.component.html',
 	styleUrls: ['./visualization.component.scss']
 })
-export class VisualizationComponent {
+export class VisualizationComponent implements OnInit {
 
 	@ViewChild('canvas', { static: true })
 	canvas: ElementRef<HTMLCanvasElement>;
@@ -60,6 +60,7 @@ export class VisualizationComponent {
 		this.context.fillStyle = VisualizationColors.GREEN.rgbaString;
 		this.render();
 	}
+
 
 	render(): void {
 		if(this.day.frames >= FRAMES_PER_DAY) {
@@ -112,7 +113,7 @@ export class VisualizationComponent {
 				this.context.fillStyle = VisualizationColors.GREEN.rgbaString;
 				break;
 		}
-		this.context.fillRect(person.x, person.y, 5, 5);
+		this.context.fillRect(person.x, person.y, 3, 3);
 	}
 
 	detectCollisions(person: Person) {
@@ -137,7 +138,7 @@ export class VisualizationComponent {
 		if (person.x <= 0) { person.hitWall('left'); return; }
 		if (person.x >= this.canvasWidth) { person.hitWall('right'); return; }
 		if (person.y <= 0) { person.hitWall('top'); return; }
-		if (person.y >= this.canvasWidth) { person.hitWall('bottom'); return; }
+		if (person.y >= this.canvasHeight) { person.hitWall('bottom'); return; }
 	}
 
 	passDay() {

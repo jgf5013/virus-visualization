@@ -105,6 +105,7 @@ export class StatsDashboardComponent implements OnInit {
 			data: []
 		}, {
 			id: 'interactions',
+			type: 'line',
 			dashStyle: 'dash',
 			marker: {
 				enabled: false
@@ -139,7 +140,8 @@ export class StatsDashboardComponent implements OnInit {
 	handleControlPanelState(controlPanelState: ControlPanelState, visState: VisualizationState) {
 		
 		if(!this.chartRef) { return; } //TODO: Probably a better rxjs way to handle this...
-		this.chartRef.series[3].addPoint([visState.daysPassed, controlPanelState.quarentine.level]);
+		const level = controlPanelState.quarentine.level ? controlPanelState.quarentine.level : 0;
+		this.chartRef.series[3].addPoint([visState.daysPassed, level]);
 	}
 
 	handleVisualizationstate(visState: VisualizationState) {
