@@ -10,7 +10,7 @@ import { selectControlPanel } from './control-panel.selector';
 import { Quarentine, QuarentineLevels } from './quarentin-level.interface';
 
 
-export const NUMBER_OF_POINTS: number = 1000;
+export const NUMBER_OF_PEOPLE: number = 1000;
 export const MIN_CONTACT_DIST: number = 3;
 export const COLLISION_ELASTICITY: number = 0.1;
 export const FRAMES_PER_DAY: number = 24;
@@ -32,6 +32,8 @@ export class VisualizationComponent implements OnInit {
 	canvas: ElementRef<HTMLCanvasElement>;
 
 	private context: CanvasRenderingContext2D;
+	private canvasY0: number;
+	private canvasX0: number;
 	private canvasHeight: number;
 	private canvasWidth: number;
 	private day: Day;
@@ -51,7 +53,7 @@ export class VisualizationComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.context = this.canvas.nativeElement.getContext('2d');
-		this.day = new Day(0, 0, 0, NUMBER_OF_POINTS);
+		this.day = new Day(0, 0, 0, NUMBER_OF_PEOPLE);
 		this.setCanvasDimensions();
 		this.initializePeople();
 		this.context.fillStyle = VisualizationColors.GREEN.rgbaString;
@@ -61,6 +63,8 @@ export class VisualizationComponent implements OnInit {
 	setCanvasDimensions() {
 		this.context.canvas.setAttribute('width', this.el.nativeElement.offsetWidth);
 		this.context.canvas.setAttribute('height', this.el.nativeElement.offsetHeight);
+		this.canvasY0 = this.el.nativeElement.offsetTop;
+		this.canvasX0 = this.el.nativeElement.offsetLeft;
 		this.canvasWidth = this.context.canvas.width;
 		this.canvasHeight = this.context.canvas.height;
 	}
@@ -78,7 +82,7 @@ export class VisualizationComponent implements OnInit {
 			person.updatePosition();
 			person.updateVelocity();
 			if(this.quarentine) {
-				person.quarentine(this.quarentine);
+				person.quarentine(this.quarentine, NUMBER_OF_PEOPLE);
 			}
 			// person.updateAcceleration();
 			this.drawPerson(person);
@@ -88,10 +92,18 @@ export class VisualizationComponent implements OnInit {
 	}
 
 	initializePeople() {
-		for (let id = 0; id < NUMBER_OF_POINTS; id++) {
+
+		const ids = [...Array(NUMBER_OF_PEOPLE).keys()];
+		const speedIds = [...Array(NUMBER_OF_PEOPLE).keys()];
+		const motionIds = [...Array(NUMBER_OF_PEOPLE).keys()];
+		
+		while(ids.length) {
+			const id = ids.splice(Math.floor(Math.random()* ids.length), 1)[0];
+			const motionId = speedIds.splice(Math.floor(Math.random()* speedIds.length), 1)[0];
+			const speedId = motionIds.splice(Math.floor(Math.random()* motionIds.length), 1)[0];
 			let x = Math.random() * this.context.canvas.width;
 			let y = Math.random() * this.context.canvas.height;
-			this.people.push(new Person(id, x, y));
+			this.people.push(new Person(id, x, y, motionId, speedId));
 		}
 		this.startVirus();
 	}
@@ -140,9 +152,9 @@ export class VisualizationComponent implements OnInit {
 	}
 
 	detectCollisionWithWall(person: Person) {
-		if (person.x <= 0) { person.hitWall('left'); return; }
+		if (person.x <= this.canvasX0) { person.hitWall('left'); return; }
 		if (person.x >= this.canvasWidth) { person.hitWall('right'); return; }
-		if (person.y <= 0) { person.hitWall('top'); return; }
+		if (person.y <= this.canvasY0) { person.hitWall('top'); return; }
 		if (person.y >= this.canvasHeight) { person.hitWall('bottom'); return; }
 	}
 
@@ -150,7 +162,7 @@ export class VisualizationComponent implements OnInit {
 		this.checkPopulationHealth();
 		this.captureStats();
 		this.recoverPopulation();
-		this.day = new Day(this.day.id + 1, 0, 0, NUMBER_OF_POINTS);
+		this.day = new Day(this.day.id + 1, 0, 0, NUMBER_OF_PEOPLE);
 	}
 
 	checkPopulationHealth() {

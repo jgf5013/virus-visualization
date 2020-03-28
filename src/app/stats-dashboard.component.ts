@@ -9,7 +9,7 @@ import { selectDayHistory, selectVisualization } from './visualization.selector'
 import { Day } from './Day';
 import { AppState } from './app.interface';
 
-import { NUMBER_OF_POINTS } from './visualization.component';
+import { NUMBER_OF_PEOPLE } from './visualization.component';
 import { selectControlPanel } from './control-panel.selector';
 import { initialVisualizationState } from './visualization.reducer';
 
@@ -62,7 +62,7 @@ export class StatsDashboardComponent implements OnInit {
 			title: {
 				text: 'Amount'
 			},
-			max: NUMBER_OF_POINTS
+			max: NUMBER_OF_PEOPLE
 		}, {
 			title: {
 				text: 'Quarentine Level'
