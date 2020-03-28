@@ -51,18 +51,23 @@ export class VisualizationComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.context = this.canvas.nativeElement.getContext('2d');
-		this.context.canvas.setAttribute('width', this.el.nativeElement.offsetWidth);
-		this.context.canvas.setAttribute('height', this.el.nativeElement.offsetHeight);
-		this.canvasWidth = this.context.canvas.width;
-		this.canvasHeight = this.context.canvas.height;
 		this.day = new Day(0, 0, 0, NUMBER_OF_POINTS);
+		this.setCanvasDimensions();
 		this.initializePeople();
 		this.context.fillStyle = VisualizationColors.GREEN.rgbaString;
 		this.render();
 	}
 
+	setCanvasDimensions() {
+		this.context.canvas.setAttribute('width', this.el.nativeElement.offsetWidth);
+		this.context.canvas.setAttribute('height', this.el.nativeElement.offsetHeight);
+		this.canvasWidth = this.context.canvas.width;
+		this.canvasHeight = this.context.canvas.height;
+	}
+
 
 	render(): void {
+		this.setCanvasDimensions();
 		if(this.day.frames >= FRAMES_PER_DAY) {
 			this.passDay();
 		}

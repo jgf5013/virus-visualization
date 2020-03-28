@@ -2,23 +2,43 @@
     height: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-rows: repeat(auto-fill, minmax(300px, 1fr));
     grid-column-gap: 1em;
     grid-row-gap: 1em;
 
     visualization {
         grid-column: span 2;
         grid-row: span 2;
+        min-width: 200px;
+        max-width: 100%;
     }
 
 
-    .right-panel {
+    // .right-panel-container {
+    //     grid-column: span 2;
+    // }
+    .right-panel-content {
+
+        height: 100%;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-rows: repeat(auto-fill, minmax(300px, 1fr));
+        grid-column-gap: 1em;
+        grid-row-gap: 1em;
+        // align-items: center;
+
+        grid-column: span 2;
         grid-row: span 2;
-        display: flex;
-        flex-wrap: wrap;
-        flex-direction: column;
-        & > * {
-            padding: 5px;
+
+
+        stats-dashboard {
+            min-width: 200px;
+            max-width: 100%;
+            min-height: 300px;
+            // max-height: 100%;
         }
     }
+
+
 }
