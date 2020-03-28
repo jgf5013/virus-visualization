@@ -1,22 +1,22 @@
 .container {
     height: 100%;
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    grid-column-gap: 5px;
-    grid-row-gap: 5px;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    grid-template-rows: repeat(5, minmax(300px, 1fr));
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
 
     visualization {
-        grid-column: 1;
-        grid-row: 1 / span 2;
+        grid-column: span 2;
+        grid-row: span 2;
     }
 
-    stats-dashboard {
-        grid-column: 2;
-        min-width: 25%;
-    }
-    control-panel {
-        grid-column: 2;
-        min-width: 25%;
+    .right-panel {
+        display: grid;
+        width: 100%;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        grid-template-rows: 1fr 1fr;
+        grid-column-gap: 5px;
+        grid-row-gap: 5px;
     }
 }

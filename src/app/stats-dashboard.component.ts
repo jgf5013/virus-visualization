@@ -72,6 +72,7 @@ export class StatsDashboardComponent implements OnInit {
 			max: QuarentineLevels.LOCKDOWN.level,
 			allowDecimals: false,
 			labels: {
+				rotation: -45,
 				formatter: function() {
 
 					for (const key in QuarentineLevels) {
