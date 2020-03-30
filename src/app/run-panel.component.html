@@ -1,0 +1,16 @@
+<div class="run-panel-container">
+    <mat-card class="flex-container">
+        <div class="stats">
+            <div class="statistic">
+                <label for="numberDead">Dead</label>
+                <mat-divider vertical="true"></mat-divider>
+                <div id="deadValue">{{numberDead}}</div>
+            </div>
+        </div>
+        <div id="replay">
+            <button mat-fab color="primary" (click)="reset();">
+                <mat-icon aria-hidden="false" aria-label="Example home icon">replay</mat-icon>
+            </button>
+        </div>
+    </mat-card>
+</div>

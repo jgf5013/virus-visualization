@@ -4,6 +4,7 @@ export interface VisualizationState {
     dayHistory: Day[];
     daysPassed: number;
     recovered: boolean;
+    playCounter: number;
 }
 
 export const VisualizationColors = {

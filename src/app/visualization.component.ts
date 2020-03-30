@@ -8,6 +8,8 @@ import { AppState } from './app.interface';
 import { ControlPanelState } from './control-panel.interface';
 import { selectControlPanel } from './control-panel.selector';
 import { Quarentine, QuarentineLevels } from './quarentin-level.interface';
+import { selectVisualization } from './visualization.selector';
+import { combineLatest, Subscription, zip, merge } from 'rxjs';
 
 
 export const NUMBER_OF_PEOPLE: number = 1000;
@@ -26,7 +28,7 @@ const STARTING_NUMBER_INFECTED: number = 5;
 	templateUrl: './visualization.component.html',
 	styleUrls: ['./visualization.component.scss']
 })
-export class VisualizationComponent implements OnInit {
+export class VisualizationComponent implements OnInit, AfterViewInit {
 
 	@ViewChild('canvas', { static: true })
 	canvas: ElementRef<HTMLCanvasElement>;
@@ -38,33 +40,55 @@ export class VisualizationComponent implements OnInit {
 	private canvasWidth: number;
 	private day: Day;
 	private quarentine: Quarentine;
+	private stateSubscription: Subscription;
+	private playCounter: number = 0;
+	private people: Person[] = [];
 
 
 	constructor(private el:ElementRef, private visualizationStore: Store<VisualizationState>, private store: Store<AppState>) {
-
+		
 		this.store.pipe(select(selectControlPanel))
 		.subscribe((controlPaneState: ControlPanelState) => {
-			console.log(controlPaneState);
 			this.quarentine = controlPaneState.quarentine;
 		});
+
+		this.store.pipe(select(selectVisualization))
+		.subscribe((visualizationState: VisualizationState) => {
+			if(visualizationState.playCounter !== this.playCounter) {
+				this.day = new Day(0, 0, 0, NUMBER_OF_PEOPLE);
+				this.initializePeople();
+				this.context.fillStyle = VisualizationColors.GREEN.rgbaString;
+				/* Note: No need to render. The next window.requestAnimationFrame
+				 * will get it... */
+				this.playCounter = visualizationState.playCounter;
+			}
+		});
+
+		const element = this.el.nativeElement;
+
+
+
 	}
 
-	private people: Person[] = [];
-
-	ngOnInit(): void {
+	ngOnInit() {
 		this.context = this.canvas.nativeElement.getContext('2d');
+	}
+
+	ngAfterViewInit() {
 		this.day = new Day(0, 0, 0, NUMBER_OF_PEOPLE);
-		this.setCanvasDimensions();
-		this.initializePeople();
+		// this.setCanvasDimensions();
 		this.context.fillStyle = VisualizationColors.GREEN.rgbaString;
 		this.render();
+		this.initializePeople();
 	}
 
 	setCanvasDimensions() {
 		this.context.canvas.setAttribute('width', this.el.nativeElement.offsetWidth);
 		this.context.canvas.setAttribute('height', this.el.nativeElement.offsetHeight);
-		this.canvasY0 = this.el.nativeElement.offsetTop;
-		this.canvasX0 = this.el.nativeElement.offsetLeft;
+		this.context.canvas.setAttribute('offsetTop', this.el.nativeElement.offsetTop);
+		this.context.canvas.setAttribute('offsetLeft', this.el.nativeElement.offsetLeft);
+		this.canvasY0 = this.context.canvas.offsetTop;
+		this.canvasX0 = this.context.canvas.offsetLeft;
 		this.canvasWidth = this.context.canvas.width;
 		this.canvasHeight = this.context.canvas.height;
 	}
@@ -95,6 +119,8 @@ export class VisualizationComponent implements OnInit {
 	}
 
 	initializePeople() {
+
+		this.people = [];
 
 		const ids = [...Array(NUMBER_OF_PEOPLE).keys()];
 		const speedIds = [...Array(NUMBER_OF_PEOPLE).keys()];
@@ -159,9 +185,9 @@ export class VisualizationComponent implements OnInit {
 	}
 
 	detectCollisionWithWall(person: Person) {
-		if (person.x <= this.canvasX0) { person.hitWall('left'); return; }
+		if (person.x <= 0) { person.hitWall('left'); return; }
 		if (person.x >= this.canvasWidth) { person.hitWall('right'); return; }
-		if (person.y <= this.canvasY0) { person.hitWall('top'); return; }
+		if (person.y <= 0) { person.hitWall('top'); return; }
 		if (person.y >= this.canvasHeight) { person.hitWall('bottom'); return; }
 	}
 

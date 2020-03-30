@@ -8,7 +8,8 @@ import { AppState } from './app.interface';
 export const initialVisualizationState: VisualizationState = {
     dayHistory: [],
     daysPassed: 0,
-    recovered: false
+    recovered: false,
+    playCounter: 0
 };
 
 export const VISUALIZATION_FEATURE_KEY = 'visualizationState';
@@ -27,7 +28,10 @@ const visualizationReducer = createReducer(
 
     return ({ ...state, recovered: true});
   }),
-  on(VisualizationActions.Reset, state => initialVisualizationState)
+  on(VisualizationActions.Reset, (state: VisualizationState) => {
+
+    return ({ ...initialVisualizationState, playCounter: state.playCounter + 1});
+  })
 );
 
 export function reducer(state: VisualizationState | undefined, action: Action) {

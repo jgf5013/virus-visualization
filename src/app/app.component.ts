@@ -1,5 +1,4 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { Person } from './Person';
 
 @Component({
   selector: 'app-root',

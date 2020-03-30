@@ -65,11 +65,24 @@ export class Person {
     }
 
     public hitWall(side: string) {
-        if((['top', 'bottom'].indexOf(side) > -1)) { this.motion.vy *= -1; }
-        if((['left', 'right'].indexOf(side) > -1)) { this.motion.vx *= -1; }
-
-        if((['top', 'bottom'].indexOf(side) > -1)) { this.motion.dvy *= -1; }
-        if((['left', 'right'].indexOf(side) > -1)) { this.motion.dvx *= -1; }
+        switch(side) {
+            case 'top':
+                this.motion.vy = Math.abs(this.motion.vy);
+                this.motion.dvy = Math.abs(this.motion.dvy);
+                break;
+            case 'bottom':
+                this.motion.vy = -Math.abs(this.motion.vy);
+                this.motion.dvy = -Math.abs(this.motion.dvy);
+                break;
+            case 'left':
+                this.motion.vx = Math.abs(this.motion.vx);
+                this.motion.dvx = Math.abs(this.motion.dvx);
+                break;
+            case 'right':
+                this.motion.vx = -Math.abs(this.motion.vx);
+                this.motion.dvx = -Math.abs(this.motion.dvx);
+                break;
+        }
     }
 
     public infect(friend: Person, infectionDay: number = 0) {

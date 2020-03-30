@@ -11,13 +11,17 @@ import { StatsDashboardComponent } from './stats-dashboard.component';
 import { ControlPanelComponent } from './control-panel.component';
 import * as fromVisualization from './visualization.reducer';
 import * as fromControlPanel from './control-panel.reducer';
+import { InformationPanelComponent } from './information-panel.component';
+import { RunPanelComponent } from './run-panel.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     VisualizationComponent,
     StatsDashboardComponent,
-    ControlPanelComponent
+    ControlPanelComponent,
+    InformationPanelComponent,
+    RunPanelComponent
   ],
   imports: [
     BrowserModule,

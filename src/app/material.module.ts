@@ -7,6 +7,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatButtonModule } from '@angular/material/button';
+
 
 @NgModule({
   declarations: [],
@@ -17,7 +21,10 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatTabsModule
+    MatTabsModule,
+    MatIconModule,
+    MatDividerModule,
+    MatButtonModule
   ],
   exports: [
     BrowserAnimationsModule,
@@ -25,7 +32,10 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatToolbarModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatTabsModule
+    MatTabsModule,
+    MatIconModule,
+    MatDividerModule,
+    MatButtonModule
   ]
 })
 export class MaterialModule { }

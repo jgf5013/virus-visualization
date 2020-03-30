@@ -1,17 +1,17 @@
 
-<div class="container">
-    <visualization class="app-item"></visualization>
-    <div class="right-panel-content">
 
-        <stats-dashboard class="app-item"></stats-dashboard>
-        <div id="controlAndAbout">
-            <control-panel class="app-item"></control-panel>
-            <mat-card id="about" class="app-item">
-                <mat-tab-group>
-                    <mat-tab label="Coronavirus">All the info about cornavirus</mat-tab>
-                    <mat-tab label="Made By">John Fisher... Check out the code, links to LinkedIn, GitHub, etc.</mat-tab>
-                </mat-tab-group>
-            </mat-card>
+<div class="grid-container">
+
+    <run-panel></run-panel>
+    <div class="container">
+        <visualization class="app-item"></visualization>
+        <div class="right-panel-content">
+
+            <stats-dashboard class="app-item"></stats-dashboard>
+            <div id="controlAndInfo">
+                <control-panel class="app-item"></control-panel>
+                <information-panel class="app-item"></information-panel>
+            </div>
         </div>
     </div>
 </div>

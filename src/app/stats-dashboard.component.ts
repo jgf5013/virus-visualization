@@ -37,86 +37,8 @@ export class StatsDashboardComponent implements OnInit {
 	public numDead: number;
 	private stateSubscription: Subscription;
 	public chartRef: Highcharts.Chart;
-	public options: any = {
-		title: {
-			text: 'Tracking the Spread'
-		},
-		subtitle: {
-			useHTML: true,
-			text: 'Day 0'
-		},
-		plotOptions: {
-			series: {
-				// general options for all series
-				marker: {
-					enabled: false
-				}
-			},
-			areaspline: {
-			}
-		},
-		xAxis: {
-			title: {
-				enabled: false
-			}
-		},
-		yAxis: [{
-			title: {
-				text: 'Amount'
-			},
-			max: NUMBER_OF_PEOPLE
-		}, {
-			title: {
-				text: 'Quarentine Level'
-			},
-			opposite: true,
-			min: 0,
-			max: QuarentineLevels.LOCKDOWN.level,
-			allowDecimals: false,
-			labels: {
-				rotation: -45,
-				formatter: function() {
-
-					for (const key in QuarentineLevels) {
-						if (QuarentineLevels.hasOwnProperty(key)) {
-							if(QuarentineLevels[key].level === this.value) {
-								return QuarentineLevels[key].mode;
-							}
-						}
-					}
-				}
-			}
-		}],
-		colors: [
-			VisualizationColors['GREEN'].rgbaString,
-			VisualizationColors['RED'].rgbaString,
-			VisualizationColors['BLUE'].rgbaString,
-			VisualizationColors['GREY'].rgbaString
-		],
-		series: [{
-			type: 'areaspline',
-			name: 'Healthy',
-			data: []
-		}, {
-			type: 'areaspline',
-			name: 'Contagious',
-			data: []
-		}, {
-			type: 'areaspline',
-			name: 'Immune',
-			data: []
-		}, {
-			id: 'interactions',
-			type: 'line',
-			dashStyle: 'dash',
-			marker: {
-				enabled: false
-			},
-			name: 'Quarentine Level',
-			yAxis: 1,
-			data: []
-		}]
-	};
+	private playCounter: number = 0;
+	private paused: boolean = false;
 
 	constructor(private store: Store<AppState>) {
 		
@@ -124,10 +46,11 @@ export class StatsDashboardComponent implements OnInit {
 			this.store.pipe(select(selectControlPanel)),
 			this.store.pipe(select(selectVisualization))
 		)
-		.subscribe(([controlPanelState, visState]) => {
-			this.handleControlPanelState(controlPanelState, visState);
-			this.handleVisualizationstate(visState);
+		.subscribe(([controlPanelState, visualizationState]) => {
+			this.handleControlPanelState(controlPanelState, visualizationState);
+			this.handleVisualizationstate(visualizationState);
 		});
+
 	}
 
 	
@@ -136,42 +59,135 @@ export class StatsDashboardComponent implements OnInit {
 	}
 
 	drawGraph() {
-		this.chartRef = Highcharts.chart('container', this.options);
-	}
-
-	handleControlPanelState(controlPanelState: ControlPanelState, visState: VisualizationState) {
+		let options: Highcharts.Options = {
+			title: {
+				text: 'Tracking the Spread'
+			},
+			subtitle: {
+				useHTML: true,
+				text: 'Day 0'
+			},
+			plotOptions: {
+				series: {
+					// general options for all series
+					marker: {
+						enabled: false
+					}
+				},
+				areaspline: {
+				}
+			},
+			xAxis: [{
+				title: {
+					text: ''
+				},
+				allowDecimals: false
+			}],
+			yAxis: [{
+				title: {
+					text: 'Amount'
+				},
+				max: NUMBER_OF_PEOPLE
+			}, {
+				title: {
+					text: 'Quarentine Level'
+				},
+				opposite: true,
+				min: 0,
+				max: QuarentineLevels.LOCKDOWN.level,
+				allowDecimals: false,
+				labels: {
+					rotation: -45,
+					formatter: function() {
 		
-		if(!this.chartRef) { return; } //TODO: Probably a better rxjs way to handle this...
-		const level = controlPanelState.quarentine.level ? controlPanelState.quarentine.level : 0;
-		this.chartRef.series[3].addPoint([visState.daysPassed, level]);
+						for (const key in QuarentineLevels) {
+							if (QuarentineLevels.hasOwnProperty(key)) {
+								if(QuarentineLevels[key].level === this.value) {
+									return QuarentineLevels[key].mode;
+								}
+							}
+						}
+					}
+				}
+			}],
+			colors: [
+				VisualizationColors['GREEN'].rgbaString,
+				VisualizationColors['RED'].rgbaString,
+				VisualizationColors['BLUE'].rgbaString,
+				VisualizationColors['GREY'].rgbaString
+			],
+			series: [{
+				type: 'areaspline',
+				name: 'Healthy',
+				data: []
+			}, {
+				type: 'areaspline',
+				name: 'Contagious',
+				data: []
+			}, {
+				type: 'areaspline',
+				name: 'Immune',
+				data: []
+			}, {
+				id: 'interactions',
+				type: 'line',
+				dashStyle: 'Dash',
+				marker: {
+					enabled: false
+				},
+				name: 'Quarentine Level',
+				yAxis: 1,
+				data: []
+			}]
+		};
+		this.chartRef = Highcharts.chart('container', options);
 	}
 
-	handleVisualizationstate(visState: VisualizationState) {
-		if(visState.daysPassed === 0) { return; }
+	handleControlPanelState(controlPanelState: ControlPanelState, visualizationState: VisualizationState) {
+		
+		if(!this.chartRef || this.paused) { return; } //TODO: Probably a better rxjs way to handle this...
+		const level = controlPanelState.quarentine.level ? controlPanelState.quarentine.level : 0;
 
-		this.updateSubtitle(visState);
+		this.chartRef.series[3].addPoint([visualizationState.daysPassed, level]);
+	}
 
-		if(visState.recovered) {
-			this.stateSubscription.unsubscribe();
+	handleVisualizationstate(visualizationState: VisualizationState) {
+		
+		if(!this.chartRef) { return; }
+
+		if(visualizationState.playCounter !== this.playCounter) {
+
+			this.chartRef.destroy();
+			this.drawGraph();
+			this.playCounter = visualizationState.playCounter;
+			this.paused = false;
 		} else {
-			this.addDayStats(visState);
+			if(this.paused) { return; }
+			this.updateSubtitle(visualizationState);
+			this.addDayStats(visualizationState);
 		}
 
+
+		this.paused = visualizationState.recovered;
+
 	}
 
 
-	addDayStats(visState: VisualizationState) {
-		const day: Day = visState.dayHistory[visState.dayHistory.length - 1];
+	addDayStats(visualizationState: VisualizationState) {
+		if(visualizationState.daysPassed === 0) { return; }
+		const day: Day = visualizationState.dayHistory[visualizationState.dayHistory.length - 1];
 		const avgNumberOfCollisions = Math.floor(day.collisions / day.numPeople);
-		this.chartRef.series[0].addPoint([visState.daysPassed, day.numHealthy]);
-		this.chartRef.series[1].addPoint([visState.daysPassed, day.numContagious]);
-		this.chartRef.series[2].addPoint([visState.daysPassed, day.numImmune]);
+		this.chartRef.series[0].addPoint([visualizationState.daysPassed, day.numHealthy]);
+		this.chartRef.series[1].addPoint([visualizationState.daysPassed, day.numContagious]);
+		this.chartRef.series[2].addPoint([visualizationState.daysPassed, day.numImmune]);
 
 		this.numDead = day.numDead;
 	}
 
-	updateSubtitle(visState: VisualizationState) {
-		const populationHealthText = visState.recovered ? `Population Recovered!` : '';
-		this.chartRef.subtitle.update({ text: `<p style="text-align: center";>Day ${visState.daysPassed} - ${this.numDead || 0} dead<br/>${populationHealthText}</p>` });
+	updateSubtitle(visualizationState: VisualizationState) {
+		if(!this.chartRef) { return; }
+
+		const populationHealthText = visualizationState.recovered ? `Population Recovered!` : '';
+		this.chartRef.subtitle.update({ text: `<p style="text-align: center";>Day ${visualizationState.daysPassed} - ${this.numDead || 0} dead<br/>${populationHealthText}</p>` });
 	}
 }
