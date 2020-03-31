@@ -12,7 +12,7 @@ import { selectVisualization } from './visualization.selector';
 import { combineLatest, Subscription, zip, merge } from 'rxjs';
 
 
-export const NUMBER_OF_PEOPLE: number = 1000;
+export const NUMBER_OF_PEOPLE: number = 500;
 export const MIN_CONTACT_DIST: number = 3;
 export const COLLISION_ELASTICITY: number = 0.1;
 export const FRAMES_PER_DAY: number = 24;

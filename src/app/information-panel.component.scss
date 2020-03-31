@@ -6,4 +6,30 @@
     border-radius: 5px;
 
     margin: 1px;
+    min-height: 0px;
+    // height: 100%;
+
+    h1, h2, h3 {
+        border-bottom: 1px solid darkgray;
+        display: flex;
+        justify-content: space-between;
+        margin-right: 1rem;
+    }
+
+    .made-by-content {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        p {
+            flex-grow: 1;
+            max-width: 80%;
+        }
+        img {
+            cursor: pointer;
+            flex-grow: 2;
+            height: 6rem;
+            width: 6rem;
+            border-radius: 5px 25px 5px;
+        }
+    }
 }

@@ -6,6 +6,7 @@ import { Component } from '@angular/core';
 	styleUrls: ['./information-panel.component.scss']
 })
 export class InformationPanelComponent {
-	
-
+	goToLinkedIn() {
+		window.open('https://www.linkedin.com/in/jgf5013/', '_blank');
+	}
 }

@@ -1,20 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
-html, body, app-root { height: 100%; max-height: 100%; }
+html, body, app-root { height: 100%; max-height: 100%; width: 100%; max-width: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+canvas { min-height: 0px; background-color: white; }
 
-mat-card {
-    background-color: whitesmoke;
+information-panel {
+    background-color: white;
 }
-mat-tab-body {
-    // height: minmax(300px, 15rem);
+
+
+.mat-tab-group {
+    min-height: 0px;
     max-height: 12rem;
-    min-height: 5rem;
-    // height: 15rem;
-    // max-height: 15rem;
     margin: 1rem;
 }
 
-.grid-container {
-    height: 100%;
+
+
+.mat-tab-body-wrapper {
+    margin: 1rem;
 }
 
