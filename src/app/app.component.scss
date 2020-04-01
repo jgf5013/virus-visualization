@@ -49,9 +49,12 @@ run-panel {
         flex-direction: column;
         justify-content: start;
         min-height: 0px;
+
         width: 40vw;
+        @media screen and (max-width: $small) {
+            width: 100%;
+        }
         flex-grow: 1;
-        flex-shrink: 10;
 
     }
     
@@ -82,19 +85,15 @@ run-panel {
         display: flex;
         flex-direction: column;
 
-
-        // @media (max-width: $small) {
-        //     flex-direction: row;
-        // }
-
         justify-content: start;
         min-height: 0px;
         min-width: 0;
-        flex-grow: 1;
         stats-dashboard {
             min-height: 0px;
-            min-width: 0;
+            min-width: 0px;
             padding-bottom: 0.5rem;
+            display: flex;
+            flex-direction: column;
         }
     }
 
