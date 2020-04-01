@@ -13,7 +13,7 @@ import { NUMBER_OF_PEOPLE } from './visualization.component';
 import { selectControlPanel } from './control-panel.selector';
 import { initialVisualizationState } from './visualization.reducer';
 
-import { QuarentineLevels } from './quarentin-level.interface';
+import { QuarantineLevels } from './quarentin-level.interface';
 
 
 declare var require: any;
@@ -90,20 +90,20 @@ export class StatsDashboardComponent implements OnInit {
 				max: NUMBER_OF_PEOPLE
 			}, {
 				title: {
-					text: 'Quarentine Level'
+					text: 'Quarantine Level'
 				},
 				opposite: true,
 				min: 0,
-				max: QuarentineLevels.LOCKDOWN.level,
+				max: QuarantineLevels.LOCKDOWN.level,
 				allowDecimals: false,
 				labels: {
 					rotation: -45,
 					formatter: function() {
 		
-						for (const key in QuarentineLevels) {
-							if (QuarentineLevels.hasOwnProperty(key)) {
-								if(QuarentineLevels[key].level === this.value) {
-									return QuarentineLevels[key].mode;
+						for (const key in QuarantineLevels) {
+							if (QuarantineLevels.hasOwnProperty(key)) {
+								if(QuarantineLevels[key].level === this.value) {
+									return QuarantineLevels[key].mode;
 								}
 							}
 						}
@@ -135,7 +135,7 @@ export class StatsDashboardComponent implements OnInit {
 				marker: {
 					enabled: false
 				},
-				name: 'Quarentine Level',
+				name: 'Quarantine Level',
 				yAxis: 1,
 				data: []
 			}]

@@ -1,4 +1,4 @@
-import { Quarentine } from './quarentin-level.interface'
+import { Quarantine } from './quarentin-level.interface'
 export interface ControlPanelState {
-    quarentine: Quarentine;
+    quarentine: Quarantine;
 }

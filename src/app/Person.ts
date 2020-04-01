@@ -1,7 +1,7 @@
 import { Motion } from './Motion';
 
 import { DAYS_TO_RECOVER } from './visualization.component'
-import { Quarentine } from './quarentin-level.interface';
+import { Quarantine } from './quarentin-level.interface';
 
 export const enum InfectionStatus {
     HEALTHY,
@@ -43,7 +43,7 @@ export class Person {
         this.motion.vy = Math.min(this.motion.vy, this.MAX_SPEED);
     }
 
-    public quarentine(quarentine: Quarentine, numberOfPeople: number) {
+    public quarentine(quarentine: Quarantine, numberOfPeople: number) {
         // If quarantine percentageMoving = 80%, you want to stop anybody with a motionId greater than (0.8 * NUMBER_OF_PEOPLE)
 
 

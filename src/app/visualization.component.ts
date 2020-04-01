@@ -7,7 +7,7 @@ import { CaptureDay, PopulationRecovered } from './visualization.actions';
 import { AppState } from './app.interface';
 import { ControlPanelState } from './control-panel.interface';
 import { selectControlPanel } from './control-panel.selector';
-import { Quarentine, QuarentineLevels } from './quarentin-level.interface';
+import { Quarantine, QuarantineLevels } from './quarentin-level.interface';
 import { selectVisualization } from './visualization.selector';
 import { combineLatest, Subscription, zip, merge } from 'rxjs';
 
@@ -39,7 +39,7 @@ export class VisualizationComponent implements OnInit, AfterViewInit {
 	private canvasHeight: number;
 	private canvasWidth: number;
 	private day: Day;
-	private quarentine: Quarentine;
+	private quarentine: Quarantine;
 	private stateSubscription: Subscription;
 	private playCounter: number = 0;
 	private people: Person[] = [];

@@ -1,14 +1,12 @@
 .flex-container {
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
     justify-content: space-between;
     flex-grow: 1;
 
     .stats {
         display: flex;
         flex-direction: row;
-        flex-wrap: wrap;
         font-stretch: expanded;
         font-size: 2.5rem;
         color: rgba($color: #101010, $alpha: 0.8);
