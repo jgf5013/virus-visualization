@@ -4,15 +4,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
 
 
-import { MaterialModule } from './material.module';
+import { MaterialModule } from './material/material.module';
 import { AppComponent } from './app.component';
-import { VisualizationComponent } from './visualization.component';
-import { StatsDashboardComponent } from './stats-dashboard.component';
-import { ControlPanelComponent } from './control-panel.component';
-import * as fromVisualization from './visualization.reducer';
-import * as fromControlPanel from './control-panel.reducer';
-import { InformationPanelComponent } from './information-panel.component';
-import { RunPanelComponent } from './run-panel.component';
+import { VisualizationComponent } from './visualization/visualization.component';
+import { StatsDashboardComponent } from './stats-dashboard/stats-dashboard.component';
+import { ControlPanelComponent } from './control-panel/control-panel.component';
+import * as fromVisualization from './visualization/visualization.reducer';
+import * as fromControlPanel from './control-panel/control-panel.reducer';
+import { InformationPanelComponent } from './information-panel/information-panel.component';
+import { RunPanelComponent } from './run-panel/run-panel.component';
 
 @NgModule({
   declarations: [

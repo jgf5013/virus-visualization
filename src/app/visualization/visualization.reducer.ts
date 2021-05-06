@@ -1,9 +1,7 @@
 
+import { Action, createReducer, on } from '@ngrx/store';
 import * as VisualizationActions from './visualization.actions';
 import { VisualizationState } from './visualization.interface';
-import { Day } from './Day';
-import { createReducer, on, Action } from '@ngrx/store';
-import { AppState } from './app.interface';
 
 export const initialVisualizationState: VisualizationState = {
     dayHistory: [],

@@ -1,7 +1,7 @@
 import { Motion } from './Motion';
 
-import { DAYS_TO_RECOVER } from './visualization.component'
-import { Quarantine } from './quarentin-level.interface';
+import { DAYS_TO_RECOVER } from '../app.constants';
+import { Quarantine } from '../quarantine-level.interface';
 
 export const enum InfectionStatus {
     HEALTHY,
@@ -43,19 +43,19 @@ export class Person {
         this.motion.vy = Math.min(this.motion.vy, this.MAX_SPEED);
     }
 
-    public quarentine(quarentine: Quarantine, numberOfPeople: number) {
+    public quarantine(quarantine: Quarantine, numberOfPeople: number) {
         // If quarantine percentageMoving = 80%, you want to stop anybody with a motionId greater than (0.8 * NUMBER_OF_PEOPLE)
 
 
-        this.motion.vx = quarentine.speedFactor * this.motion.vx;
-        this.motion.vy = quarentine.speedFactor * this.motion.vy;
-        this.motion.vx = quarentine.speedFactor * this.motion.vx;
-        this.motion.vy = quarentine.speedFactor * this.motion.vy;
+        this.motion.vx = quarantine.speedFactor * this.motion.vx;
+        this.motion.vy = quarantine.speedFactor * this.motion.vy;
+        this.motion.vx = quarantine.speedFactor * this.motion.vx;
+        this.motion.vy = quarantine.speedFactor * this.motion.vy;
 
-        this.motion.vx = (this.motion.speedId > quarentine.percentageMoving * numberOfPeople) ? 0: this.motion.vx;
-        this.motion.vy = (this.motion.speedId > quarentine.percentageMoving * numberOfPeople) ? 0: this.motion.vy;
-        this.motion.vx = (this.motion.speedId > quarentine.percentageMoving * numberOfPeople) ? 0: this.motion.vx;
-        this.motion.vy = (this.motion.speedId > quarentine.percentageMoving * numberOfPeople) ? 0: this.motion.vy;
+        this.motion.vx = (this.motion.speedId > quarantine.percentageMoving * numberOfPeople) ? 0: this.motion.vx;
+        this.motion.vy = (this.motion.speedId > quarantine.percentageMoving * numberOfPeople) ? 0: this.motion.vy;
+        this.motion.vx = (this.motion.speedId > quarantine.percentageMoving * numberOfPeople) ? 0: this.motion.vx;
+        this.motion.vy = (this.motion.speedId > quarantine.percentageMoving * numberOfPeople) ? 0: this.motion.vy;
         
     }
 

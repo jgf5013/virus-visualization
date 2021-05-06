@@ -1,7 +1,7 @@
 import { AppState } from './app.interface';
 
-import * as fromVisualization from './visualization.reducer';
-import * as fromControlPanel from './control-panel.reducer';
+import * as fromVisualization from './visualization/visualization.reducer';
+import * as fromControlPanel from './control-panel/control-panel.reducer';
 import { Action } from '@ngrx/store';
 
 const initialState: AppState = {

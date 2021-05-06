@@ -1,8 +1,8 @@
 <mat-card>
     <mat-form-field>
         <mat-label>Quarantine Mode</mat-label>
-        <mat-select (selectionChange)="quarentineModeChange($event)">
-            <mat-option *ngFor="let mode of quarentineModes" [value]="mode">
+        <mat-select (selectionChange)="quarantineModeChange($event)">
+            <mat-option *ngFor="let mode of quarantineModes" [value]="mode">
                 {{mode.mode | titlecase}}
             </mat-option>
         </mat-select>

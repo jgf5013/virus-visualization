@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AppState } from './app.interface';
+import { AppState } from '../app.interface';
 import { Store, select } from '@ngrx/store';
-import { selectVisualization } from './visualization.selector';
-import { VisualizationState } from './visualization.interface';
-import { Day } from './Day';
-import { ControlPanelState } from './control-panel.interface';
-import { Reset } from './visualization.actions';
+import { selectVisualization } from '../visualization/visualization.selector';
+import { VisualizationState } from '../visualization/visualization.interface';
+import { Day } from '../visualization/Day';
+import { Reset } from '../visualization/visualization.actions';
 
 @Component({
   selector: 'run-panel',

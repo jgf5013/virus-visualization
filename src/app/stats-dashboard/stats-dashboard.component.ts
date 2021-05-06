@@ -3,17 +3,17 @@ import * as Highcharts from 'highcharts';
 import { Store, select } from '@ngrx/store';
 import { combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
-import { VisualizationState, VisualizationColors } from './visualization.interface';
-import { ControlPanelState } from './control-panel.interface';
-import { selectDayHistory, selectVisualization } from './visualization.selector';
-import { Day } from './Day';
-import { AppState } from './app.interface';
+import { VisualizationState, VisualizationColors } from '../visualization/visualization.interface';
+import { ControlPanelState } from '../control-panel/control-panel.interface';
+import { selectDayHistory, selectVisualization } from '../visualization/visualization.selector';
+import { Day } from '../visualization/Day';
+import { AppState } from '../app.interface';
 
-import { NUMBER_OF_PEOPLE } from './visualization.component';
-import { selectControlPanel } from './control-panel.selector';
-import { initialVisualizationState } from './visualization.reducer';
+import { selectControlPanel } from '../control-panel/control-panel.selector';
+import { initialVisualizationState } from '../visualization/visualization.reducer';
 
-import { QuarantineLevels } from './quarentin-level.interface';
+import { QuarantineLevels } from '../quarantine-level.interface';
+import { NUMBER_OF_PEOPLE } from '../app.constants';
 
 
 declare var require: any;
@@ -146,7 +146,7 @@ export class StatsDashboardComponent implements OnInit {
 	handleControlPanelState(controlPanelState: ControlPanelState, visualizationState: VisualizationState) {
 		
 		if(!this.chartRef || this.paused) { return; } //TODO: Probably a better rxjs way to handle this...
-		const level = controlPanelState.quarentine.level ? controlPanelState.quarentine.level : 0;
+		const level = controlPanelState.quarantine.level ? controlPanelState.quarantine.level : 0;
 
 		this.chartRef.series[3].addPoint([visualizationState.daysPassed, level]);
 	}

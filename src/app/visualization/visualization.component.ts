@@ -1,25 +1,17 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, OnInit } from '@angular/core';
-import { Person, InfectionStatus } from './Person';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
+import { COLLISION_ELASTICITY, DAILY_FATALITY_RATE, FRAMES_PER_DAY, MIN_CONTACT_DIST, NUMBER_OF_PEOPLE, STARTING_NUMBER_INFECTED } from '../app.constants';
+import { AppState } from '../app.interface';
+import { ControlPanelState } from '../control-panel/control-panel.interface';
+import { selectControlPanel } from '../control-panel/control-panel.selector';
+import { Quarantine } from '../quarantine-level.interface';
 import { Day } from './Day';
-import { Store, select } from '@ngrx/store';
-import { VisualizationState, VisualizationColors } from './visualization.interface';
+import { InfectionStatus, Person } from './Person';
 import { CaptureDay, PopulationRecovered } from './visualization.actions';
-import { AppState } from './app.interface';
-import { ControlPanelState } from './control-panel.interface';
-import { selectControlPanel } from './control-panel.selector';
-import { Quarantine, QuarantineLevels } from './quarentin-level.interface';
+import { VisualizationColors, VisualizationState } from './visualization.interface';
 import { selectVisualization } from './visualization.selector';
-import { combineLatest, Subscription, zip, merge } from 'rxjs';
 
-
-export const NUMBER_OF_PEOPLE: number = 500;
-export const MIN_CONTACT_DIST: number = 3;
-export const COLLISION_ELASTICITY: number = 0.1;
-export const FRAMES_PER_DAY: number = 24;
-export const DAYS_TO_RECOVER: number = 15;
-export const DAILY_FATALITY_RATE: number = 0.2;
-
-const STARTING_NUMBER_INFECTED: number = 5;
 
 
 
@@ -39,7 +31,7 @@ export class VisualizationComponent implements OnInit, AfterViewInit {
 	private canvasHeight: number;
 	private canvasWidth: number;
 	private day: Day;
-	private quarentine: Quarantine;
+	private quarantine: Quarantine;
 	private stateSubscription: Subscription;
 	private playCounter: number = 0;
 	private people: Person[] = [];
@@ -49,7 +41,7 @@ export class VisualizationComponent implements OnInit, AfterViewInit {
 		
 		this.store.pipe(select(selectControlPanel))
 		.subscribe((controlPaneState: ControlPanelState) => {
-			this.quarentine = controlPaneState.quarentine;
+			this.quarantine = controlPaneState.quarantine;
 		});
 
 		this.store.pipe(select(selectVisualization))
@@ -108,8 +100,8 @@ export class VisualizationComponent implements OnInit, AfterViewInit {
 			this.detectCollisions(person);
 			person.updatePosition();
 			person.updateVelocity();
-			if(this.quarentine) {
-				person.quarentine(this.quarentine, NUMBER_OF_PEOPLE);
+			if(this.quarantine) {
+				person.quarantine(this.quarantine, NUMBER_OF_PEOPLE);
 			}
 			// person.updateAcceleration();
 			this.drawPerson(person);

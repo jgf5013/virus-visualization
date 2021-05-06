@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { ChangeControls } from './control-panel.actions';
 import { MatSelectChange } from '@angular/material/select';
 
-import { QuarantineLevels, Quarantine } from './quarentin-level.interface';
+import { QuarantineLevels, Quarantine } from '../quarantine-level.interface';
 
 @Component({
 	selector: 'control-panel',
@@ -13,19 +13,19 @@ import { QuarantineLevels, Quarantine } from './quarentin-level.interface';
 	styleUrls: ['./control-panel.component.scss']
 })
 export class ControlPanelComponent {
-	public quarentineModes: Quarantine[] = [];
+	public quarantineModes: Quarantine[] = [];
 	constructor(private store: Store<ControlPanelState>) {
 		for (const key in QuarantineLevels) {
 			if (QuarantineLevels.hasOwnProperty(key)) {
 				const level: Quarantine = QuarantineLevels[key];
-				this.quarentineModes.push(level);
+				this.quarantineModes.push(level);
 			}
 		}
 	}
 	
-	quarentineModeChange(event$: MatSelectChange): void {
+	quarantineModeChange(event$: MatSelectChange): void {
 		this.store.dispatch(ChangeControls({
-			quarentine: event$.value
+			quarantine: event$.value
 		}));
 	}
 

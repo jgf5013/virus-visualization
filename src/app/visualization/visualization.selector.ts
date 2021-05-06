@@ -1,7 +1,7 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
 
 import { VisualizationState } from './visualization.interface';
-import { AppState } from './app.interface';
+import { AppState } from '../app.interface';
 
 import * as fromVisualization from './visualization.reducer';
 
