@@ -25,7 +25,7 @@
     "@angular/platform-browser-dynamic": "~11.2.13",
     "@angular/router": "~11.2.13",
     "@ngrx/store": "^11.1.1",
-    "highcharts": "^8.0.4",
+    "highcharts": "^8.1.1",
     "recaptcha-v3": "^1.7.2",
     "rxjs": "~6.5.4",
     "tslib": "^2.0.0",
